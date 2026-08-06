@@ -60,7 +60,15 @@ def neighbours(grid, node):
     `node` is a (row, col) tuple. A neighbour is valid if is_walkable()
     returns True for it. Use up/down/left/right moves only (no diagonals).
     """
-    raise NotImplementedError("TODO: implement neighbours()")
+    row, col = node
+    # 4 directional movements: Up, Down, Left, Right
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    
+    for dr, dc in directions:
+        new_row, new_col = row + dr, col + dc
+        if is_walkable(grid, new_row, new_col):
+            yield (new_row, new_col)
+
 
 
 def heuristic(node, goal):
@@ -71,7 +79,12 @@ def heuristic(node, goal):
     This must be admissible for 4-directional grid movement -- explain in
     your submission notes why Manhattan distance satisfies this.
     """
-    raise NotImplementedError("TODO: implement heuristic()")
+
+    r1, c1 = node
+    r2, c2 = goal
+    return abs(r1 - r2) + abs(c1 - c2)
+
+   
 
 
 def reconstruct_path(came_from, current):
@@ -107,6 +120,48 @@ def astar(grid, start, goal):
     heap gives you a deterministic tie-break (prefer larger g) -- see the
     worked example solution for this pattern if you get stuck.
     """
+
+    open_list = []
+    # Push initial node: (f, -g, row, col, node)
+    heapq.heappush(open_list, (heuristic(start, goal), 0, start[0], start[1], start))
+    
+    came_from = {}
+    g_score = {start: 0}
+    closed_set = set()
+    
+    while open_list:
+        f, neg_g, r, c, current = heapq.heappop(open_list)
+        
+        # If the node was already expanded via a cheaper path, skip it
+        if current in closed_set:
+            continue
+            
+        # Stop condition: goal is popped from the open list
+        if current == goal:
+            path = reconstruct_path(came_from, current)
+            return path, g_score[current]
+            
+        closed_set.add(current)
+        
+        for neighbor in neighbours(grid, current):
+            if neighbor in closed_set:
+                continue
+                
+            # The cost to move to any valid adjacent grid cell is 1
+            tentative_g = g_score[current] + 1
+            
+            # If we discovered a new node or a cheaper path to an existing node
+            if neighbor not in g_score or tentative_g < g_score[neighbor]:
+                came_from[neighbor] = current
+                g_score[neighbor] = tentative_g
+                f_score = tentative_g + heuristic(neighbor, goal)
+                
+                # Push updated/new neighbor to the priority queue
+                heapq.heappush(open_list, (f_score, -tentative_g, neighbor[0], neighbor[1], neighbor))
+                
+    # Loop finished and goal was never reached
+    return None, float('inf')
+
     raise NotImplementedError("TODO: implement astar()")
 
 
