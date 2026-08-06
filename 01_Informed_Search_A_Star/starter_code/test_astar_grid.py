@@ -48,7 +48,23 @@ def test_given_example():
 # Which mind-map category does this represent? (edit this comment)
 # ---------------------------------------------------------------------
 def test_case_1():
-    raise NotImplementedError("TODO: design and implement test case 1")
+    grid = [
+        "S#.",
+        ".#.",
+        "..G"
+    ]
+    start = find_cell(grid, "S")
+    goal = find_cell(grid, "G")
+
+    path, cost = astar(grid, start, goal)
+
+    assert path is not None
+    assert path[0] == start
+    assert path[-1] == goal
+    # Path must go down twice, then right twice to bypass the wall: 
+    # (0,0) -> (1,0) -> (2,0) -> (2,1) -> (2,2). 
+    assert cost == 4
+    
 
 
 # ---------------------------------------------------------------------
@@ -56,7 +72,19 @@ def test_case_1():
 # Which mind-map category does this represent? (edit this comment)
 # ---------------------------------------------------------------------
 def test_case_2():
-    raise NotImplementedError("TODO: design and implement test case 2")
+    grid = [
+        "S..",
+        "###",
+        "..G"
+    ]
+    start = find_cell(grid, "S")
+    goal = find_cell(grid, "G")
+
+    path, cost = astar(grid, start, goal)
+
+    # Path should return None or an empty list since the goal is walled off
+    assert not path
+    
 
 
 # ---------------------------------------------------------------------
@@ -64,7 +92,23 @@ def test_case_2():
 # Which mind-map category does this represent? (edit this comment)
 # ---------------------------------------------------------------------
 def test_case_3():
-    raise NotImplementedError("TODO: design and implement test case 3")
+    grid = [
+        "S...",
+        "###.",
+        "G..."
+    ]
+    start = find_cell(grid, "S")
+    goal = find_cell(grid, "G")
+
+    path, cost = astar(grid, start, goal)
+
+    assert path is not None
+    assert path[0] == start
+    assert path[-1] == goal
+    # The shortest path requires moving all the way right, down, then all the way left:
+    # (0,0)->(0,1)->(0,2)->(0,3)->(1,3)->(2,3)->(2,2)->(2,1)->(2,0)
+    assert cost == 8
+   
 
 
 if __name__ == "__main__":
