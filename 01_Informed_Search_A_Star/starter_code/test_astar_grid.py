@@ -44,14 +44,13 @@ def test_given_example():
 
 
 # ---------------------------------------------------------------------
-# TODO Test Case 1
-# Which mind-map category does this represent? (edit this comment)
+# Category: Structure -> complex obstacles/walls; checks a valid detour.
 # ---------------------------------------------------------------------
 def test_case_1():
     grid = [
         "S#.",
         ".#.",
-        "..G"
+        "..G",
     ]
     start = find_cell(grid, "S")
     goal = find_cell(grid, "G")
@@ -61,41 +60,36 @@ def test_case_1():
     assert path is not None
     assert path[0] == start
     assert path[-1] == goal
-    # Path must go down twice, then right twice to bypass the wall: 
-    # (0,0) -> (1,0) -> (2,0) -> (2,1) -> (2,2). 
+    # Path must go down twice, then right twice to bypass the wall.
     assert cost == 4
-    
 
 
 # ---------------------------------------------------------------------
-# TODO Test Case 2
-# Which mind-map category does this represent? (edit this comment)
+# Category: Solvability -> unsolvable; checks correct no-path handling.
 # ---------------------------------------------------------------------
 def test_case_2():
     grid = [
         "S..",
         "###",
-        "..G"
+        "..G",
     ]
     start = find_cell(grid, "S")
     goal = find_cell(grid, "G")
 
     path, cost = astar(grid, start, goal)
 
-    # Path should return None or an empty list since the goal is walled off
-    assert not path
-    
+    assert path is None
+    assert cost == float("inf")
 
 
 # ---------------------------------------------------------------------
-# TODO Test Case 3
-# Which mind-map category does this represent? (edit this comment)
+# Category: What is checked -> optimality; checks the shortest detour cost.
 # ---------------------------------------------------------------------
 def test_case_3():
     grid = [
         "S...",
         "###.",
-        "G..."
+        "G...",
     ]
     start = find_cell(grid, "S")
     goal = find_cell(grid, "G")
@@ -105,10 +99,8 @@ def test_case_3():
     assert path is not None
     assert path[0] == start
     assert path[-1] == goal
-    # The shortest path requires moving all the way right, down, then all the way left:
-    # (0,0)->(0,1)->(0,2)->(0,3)->(1,3)->(2,3)->(2,2)->(2,1)->(2,0)
+    # The shortest path goes right, through the gap, then left to the goal.
     assert cost == 8
-   
 
 
 if __name__ == "__main__":
