@@ -3,8 +3,8 @@ Assignment starter: backtracking CSP solver for map colouring.
 
 Read ../guide.md and ../worked_example.md BEFORE you start coding here.
 
-Your job: fill in every function marked TODO. Do not change function
-signatures (the tests in test_csp_map_coloring.py rely on them).
+The required functions are implemented below. Do not change their signatures
+(the tests in test_csp_map_coloring.py rely on them).
 
 The problem: colour a map of Australia's 7 regions so that no two adjacent
 regions share a colour, using only 3 colours.
@@ -28,29 +28,34 @@ DOMAIN = ["Red", "Green", "Blue"]
 
 
 def is_consistent(assignment, var, value):
-    """TODO: return True if assigning `value` to `var` does not conflict
+    """Return True if assigning `value` to `var` does not conflict
     with any already-assigned neighbour of `var`.
 
     `assignment` is a dict {variable: value} of variables assigned so far.
     Use NEIGHBOURS[var] to find which variables to check against.
     """
-    raise NotImplementedError("TODO: implement is_consistent()")
+    return all(
+        neighbour not in assignment or assignment[neighbour] != value
+        for neighbour in NEIGHBOURS[var]
+    )
 
 
 def select_unassigned_variable(assignment):
-    """TODO: return the name of a variable from VARIABLES that is not yet
-    a key in `assignment`. Return None if all variables are assigned.
+    """Return the first variable from VARIABLES that is not assigned.
+
+    Return None if all variables are assigned.
 
     A simple valid strategy: return the first unassigned variable in
     VARIABLES order. (Bonus/optional: implement the MRV heuristic instead
     -- see ../guide.md section 3.)
     """
-    raise NotImplementedError("TODO: implement select_unassigned_variable()")
+    return next((var for var in VARIABLES if var not in assignment), None)
 
 
 def backtracking_search(variables, domain):
-    """TODO: run backtracking search and return a complete, consistent
-    assignment (dict {variable: value}), or None if no solution exists.
+    """Return a complete, consistent assignment using backtracking.
+
+    Return a dict {variable: value}, or None if no solution exists.
 
     Follow the pseudocode in ../guide.md section 2:
       1. If the assignment is complete, return it.
@@ -66,7 +71,21 @@ def backtracking_search(variables, domain):
     Tip: write a helper function backtrack(assignment) and call it with
     an empty dict to start.
     """
-    raise NotImplementedError("TODO: implement backtracking_search()")
+    def backtrack(assignment):
+        if len(assignment) == len(variables):
+            return assignment.copy()
+
+        var = next(var for var in variables if var not in assignment)
+        for value in domain:
+            if is_consistent(assignment, var, value):
+                assignment[var] = value
+                result = backtrack(assignment)
+                if result is not None:
+                    return result
+                del assignment[var]
+        return None
+
+    return backtrack({})
 
 
 if __name__ == "__main__":
